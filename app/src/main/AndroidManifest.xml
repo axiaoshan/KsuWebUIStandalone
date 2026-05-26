@@ -30,8 +30,7 @@
             android:name=".WebUIActivity"
             android:autoRemoveFromRecents="true"
             android:documentLaunchMode="intoExisting"
-            android:exported="true"
-            android:theme="@style/Theme.KsuWebUI.Transparent" />
+            android:exported="true" />
 
     </application>
 

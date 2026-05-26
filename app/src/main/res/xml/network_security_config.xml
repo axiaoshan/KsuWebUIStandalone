@@ -5,7 +5,4 @@
         <domain includeSubdomains="true">0.0.0.0</domain>
         <domain includeSubdomains="true">::1</domain>
     </domain-config>
-    <domain-config>
-        <domain includeSubdomains="true">kernelsu.org</domain>
-    </domain-config>
 </network-security-config>

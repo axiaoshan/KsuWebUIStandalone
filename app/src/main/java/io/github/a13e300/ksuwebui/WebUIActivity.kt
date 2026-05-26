@@ -2,14 +2,16 @@ package io.github.a13e300.ksuwebui
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup.MarginLayoutParams
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -25,7 +27,8 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
     private lateinit var moduleDir: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Disable edge to edge to prevent status bar from overlaying content
+        // Enable edge to edge
+        enableEdgeToEdge()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -54,8 +57,6 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
         moduleDir = "/data/adb/modules/$moduleId"
 
         webView = WebView(this).apply {
-            // Set white background to fix dark theme contrast
-            setBackgroundColor(Color.WHITE)
             ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
                 val inset = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 view.updateLayoutParams<MarginLayoutParams> {
@@ -78,6 +79,17 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
 
     private fun setupWebview(fs: FileSystemManager) {
         val webRoot = File("$moduleDir/webroot")
+        val indexFile = fs.getFile("$moduleDir/webroot/index.html")
+
+        if (!indexFile.exists()) {
+            webView.apply {
+                addJavascriptInterface(webviewInterface, "ksu")
+                setWebViewClient(WebViewClient())
+                loadUrl("file:///android_asset/no_webui.html")
+            }
+            return
+        }
+
         val webViewAssetLoader = WebViewAssetLoader.Builder()
             .setDomain("mui.kernelsu.org")
             .addPathHandler(
@@ -92,8 +104,8 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
         val webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView,
-                request: android.webkit.WebResourceRequest
-            ): android.webkit.WebResourceResponse? {
+                request: WebResourceRequest
+            ): WebResourceResponse? {
                 return webViewAssetLoader.shouldInterceptRequest(request.url)
             }
         }

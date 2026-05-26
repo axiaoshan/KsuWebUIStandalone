@@ -17,16 +17,17 @@ val keystoreProperties = if (keystorePropertiesFile.exists() && keystoreProperti
     }
 } else null
 
-val gitCommitCount = try {
+fun String.execute(currentWorkingDir: File = file("./")): String {
     val byteOut = ByteArrayOutputStream()
     project.exec {
-        commandLine("git", "rev-list", "HEAD", "--count")
+        workingDir = currentWorkingDir
+        commandLine = split("\\s".toRegex())
         standardOutput = byteOut
     }
-    String(byteOut.toByteArray()).trim().toInt()
-} catch (_: Exception) {
-    1
+    return String(byteOut.toByteArray()).trim()
 }
+
+val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 
 android {
     namespace = "io.github.a13e300.ksuwebui"
