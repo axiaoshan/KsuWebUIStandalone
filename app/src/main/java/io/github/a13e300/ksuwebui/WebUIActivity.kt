@@ -27,8 +27,7 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
     private lateinit var moduleDir: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Enable edge to edge
-        enableEdgeToEdge()
+        // Disable edge to edge to prevent status bar from overlaying content
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -57,7 +56,7 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
         moduleDir = "/data/adb/modules/$moduleId"
 
         webView = WebView(this).apply {
-            setBackgroundColor(0x00000000)
+            setBackgroundColor(0xFFFFFFFF)
             ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
                 val inset = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 view.updateLayoutParams<MarginLayoutParams> {
