@@ -2,6 +2,7 @@ package io.github.a13e300.ksuwebui
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup.MarginLayoutParams
@@ -54,7 +55,7 @@ class WebUIActivity : ComponentActivity(), FileSystemService.Listener {
 
         webView = WebView(this).apply {
             // Set white background to fix dark theme contrast
-            setBackgroundColor(0xFFFFFFFF)
+            setBackgroundColor(Color.WHITE)
             ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
                 val inset = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 view.updateLayoutParams<MarginLayoutParams> {
